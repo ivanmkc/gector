@@ -1,6 +1,9 @@
 from fastapi import Depends, FastAPI
 from gector.gec_model import GecBERTModel
 from pydantic import BaseModel
+from fastapi.responses import PlainTextResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 app = FastAPI()
 
@@ -50,4 +53,21 @@ class GrammarResponse(BaseModel):
 def predict(request: GrammarRequest, model: GecBERTModel = Depends(get_model)):
     # return model.predict(request)
     preds, _ = model.handle_batch([request.text.split()])
-    return GrammarResponse(result=" ".join(preds[0]))
+
+    if len(preds) > 0:
+        result = ""
+        for word in preds[0]:
+            remove_characters = ["'", '"', "(", ")", "[", "]"]
+
+            for character in remove_characters:
+                word = word.replace(character, "")
+
+            first_char = word[0]
+            if first_char.isalnum():
+                result += " "
+
+            result += word
+
+        return GrammarResponse(result=result.strip())
+    else:
+        return GrammarResponse(result="")

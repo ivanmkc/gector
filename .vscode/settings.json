@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "env/bin/python"
+    "python.pythonPath": "env/bin/python",
+    "DOCKER_IMAGE_TAG": "us.gcr.io/chatbot-299615/chatbot-grammar:latest",
+    "DOCKER_CONTAINER_NAME": "chatbot-grammar"
 }
